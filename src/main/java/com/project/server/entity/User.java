@@ -3,11 +3,17 @@ package com.project.server.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Data;
+
 import java.util.List;
 
 @Document(collection = "users")
+@Data
 public class User {
 
+	public User(String teacherEmail, String hashpw, String string) {
+		//TODO Auto-generated constructor stub
+	}
 	@Id
 	private String id;
 	private String email;
@@ -15,49 +21,4 @@ public class User {
 	private String role;
 	private List<String> surveys;
 
-	// Getters and setters
-
-	public User(String teacherEmail, String hashpw, String string) {
-        //TODO Auto-generated constructor stub
-    }
-
-    public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public List<String> getSurveys() {
-		return surveys;
-	}
-
-	public void setSurveys(List<String> surveys) {
-		this.surveys = surveys;
-	}
 }

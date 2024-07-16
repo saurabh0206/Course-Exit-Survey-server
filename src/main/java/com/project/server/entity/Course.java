@@ -98,33 +98,41 @@ public class Course {
             private String question;
             private List<String> answerChoices;
             private List<String> responses;
+
             public String getId() {
                 return id;
             }
+
             public void setId(String id) {
                 this.id = id;
             }
+
             public String getQuestion() {
                 return question;
             }
+
             public void setQuestion(String question) {
                 this.question = question;
             }
+
             public List<String> getAnswerChoices() {
                 return answerChoices;
             }
+
             public void setAnswerChoices(List<String> answerChoices) {
                 this.answerChoices = answerChoices;
             }
+
             public List<String> getResponses() {
                 return responses;
             }
+
             public void setResponses(List<String> responses) {
                 this.responses = responses;
             }
 
             // Getters and setters
-            
+
         }
 
         public List<com.project.server.entity.Question> getQuestions() {
@@ -168,5 +176,4 @@ public class Course {
         }
     }
 
-    
 }
