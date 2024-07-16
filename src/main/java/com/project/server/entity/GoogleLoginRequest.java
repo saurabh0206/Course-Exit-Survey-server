@@ -1,29 +1,15 @@
 package com.project.server.entity;
 
+import lombok.Data;
+
+@Data
 public class GoogleLoginRequest {
-    private GoogleData data;
+	private GoogleData data;
 
-    // Getters and setters
-
-    public static class GoogleData {
-        private String email;
-
-		public String getEmail() {
-			return email;
-		}
-
-		public void setEmail(String email) {
-			this.email = email;
-		}
-
-        // Getters and setters
-    }
-
-	public GoogleData getData() {
-		return data;
+	// Getters and setters
+	@Data
+	public static class GoogleData {
+		private String email;
 	}
 
-	public void setData(GoogleData data) {
-		this.data = data;
-	}
 }
