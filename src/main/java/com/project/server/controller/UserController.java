@@ -1,68 +1,51 @@
-// package com.project.server.controller;
+package com.project.server.controller;
 
-// import org.springframework.beans.factory.annotation.Value;
+import com.project.server.configuration.JwtUtil;
+import com.project.server.entity.GoogleLoginRequest;
+import com.project.server.entity.LoginRequest;
+import com.project.server.entity.LoginResponse;
+import com.project.server.entity.User;
+import com.project.server.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.annotation.*;
 
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RestController;
+@RestController
+@RequestMapping("/api/auth")
+public class UserController {
 
-// @RestController
-// @RequestMapping("/api/users")
-// public class UserController {
+    @Autowired
+    private UserService userService;
 
-// // @Autowired
-// // private UserRepository userRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-// @Value("${jwt.secret}")
-// private String jwtSecret;
+    // Login user with email and password
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            String token = jwtUtil.doGenerateToken(null, user.getId());
+            return ResponseEntity.ok(new LoginResponse(user.getEmail(), token, user.getRole()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseException(null, null, e, e.getMessage(), null));
+        }
+    }
 
-// @Value("${jwt.expiration}")
-// private Long jwtExpiration;
-
-// // private Key getSigningKey() {
-// // byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
-// // return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
-// // }
-
-// // private String createToken(String userId) {
-// // return Jwts.builder().setSubject(userId).setIssuedAt(new Date())
-// // .setExpiration(new Date(System.currentTimeMillis() +
-// // jwtExpiration)).signWith(getSigningKey())
-// // .compact();
-// // }
-
-// // @PostMapping("/login")
-// // public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest)
-// {
-// // Optional<User> userOpt =
-// userRepository.findByEmail(loginRequest.getEmail());
-
-// // if (!userOpt.isPresent() || !BCrypt.checkpw(loginRequest.getPassword(),
-// // userOpt.get().getPassword())) {
-// // return ResponseEntity.status(400).body("Invalid email or password");
-// // }
-
-// // User user = userOpt.get();
-// // //String token = createToken(user.getId());
-
-// // return ResponseEntity.ok(new LoginResponse(user.getEmail(), token,
-// // user.getRole()));
-// // }
-
-// // @PostMapping("/google-login")
-// // public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest
-// // googleLoginRequest) {
-// // Optional<User> userOpt =
-// // userRepository.findByEmail(googleLoginRequest.getData().getEmail());
-
-// // if (!userOpt.isPresent()) {
-// // return ResponseEntity.status(401).body("User currently not enrolled in any
-// // course");
-// // }
-
-// // User user = userOpt.get();
-// // String token = createToken(user.getId());
-
-// // return ResponseEntity.ok(new LoginResponse(user.getEmail(), token,
-// // user.getRole()));
-// // }
-// }
+    // Login user with Google
+    @PostMapping("/login/google")
+    public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest googleLoginRequest) {
+        try {
+            User user = userService.findByEmail(googleLoginRequest.getData().getEmail());
+            if (user == null) {
+                return ResponseEntity.status(401).body(new ErrorResponseException(null, null, null,
+                        "User currently not enrolled in any course", null));
+            }
+            String token = jwtUtil.doGenerateToken(null, user.getId());
+            return ResponseEntity.ok(new LoginResponse(user.getEmail(), token, user.getRole()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseException(null, null, e, e.getMessage(), null));
+        }
+    }
+}

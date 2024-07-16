@@ -6,10 +6,12 @@ import lombok.Data;
 public class GoogleLoginRequest {
 	private GoogleData data;
 
-	// Getters and setters
 	@Data
 	public static class GoogleData {
 		private String email;
 	}
 
+	public String getEmail() {
+		return data != null ? data.getEmail() : null;
+	}
 }
